@@ -6,9 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### 2026.04.22 / ALOUREI
 
+### Added
+
+- route pour
+  - logout
+  - rafraichir ses tokens
+- middleware pour
+  - checker que son refresh token est bon
+
 ### Updated
 
-- JWT : stockage dans les cookies au lieu du header
+- JWT : access token renvoyé et refresh token dans les cookies
 
 ---
 
