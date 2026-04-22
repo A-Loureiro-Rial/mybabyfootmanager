@@ -1,40 +1,47 @@
 # Routes
+
 All functionnal routes will be listed here
+
 <details>
 
 <summary>Teams</summary>
 
-### @route {GET}    /team/list
+### @route {GET} /team/list
 
 - @param
-- @response         array of teams
+- @response array of teams
 
-### @route {GET}    /team/
+### @route {GET} /team/
 
-- @param            id
-- @response         team
+- @param id
+- @response team
 
-### @route {POST}   /team/create
-**REQUIRES AUTH**
-- @bodyparams       name: string(64), description: string(255)
-- @response         team
+### @route {POST} /team/create
 
-### @route {PUT}    /team/update
 **REQUIRES AUTH**
 
-- @bodyparams       id: unsigned int, name: string(64), description: string(255)
-- @response         team
+- @bodyparams name: string(64), description: string(255)
+- @response team
+
+### @route {PUT} /team/update
+
+**REQUIRES AUTH**
+
+- @bodyparams id: unsigned int, name: string(64), description: string(255)
+- @response team
 
 ### @route {DELETE} /team/delete
+
 **REQUIRES AUTH**
 
-- @bodyparams       id: unsigned int
+- @bodyparams id: unsigned int
 - @response
 
-### @route {POST}   /team/register
+### @route {POST} /team/register
+
 **REQUIRES AUTH**
 
-- @bodyparams       team: unsigned int, tournament: unsigned int
+- @bodyparams team: unsigned int, tournament: unsigned int
 - @response
 
 </details>
@@ -43,31 +50,35 @@ All functionnal routes will be listed here
 
 <summary>Tournaments</summary>
 
-### @route {GET}    /tournament/list
+### @route {GET} /tournament/list
 
 - @param
-- @response         array of tournaments
+- @response array of tournaments
 
-### @route {GET}    /tournament/
+### @route {GET} /tournament/
 
-- @param            id
-- @response         tournament
+- @param id
+- @response tournament
 
-### @route {POST}   /tournament/create
-**REQUIRES AUTH**
-- @bodyparams       name: string(64), description: string(255)
-- @response         tournament
+### @route {POST} /tournament/create
 
-### @route {PUT}    /tournament/update
 **REQUIRES AUTH**
 
-- @bodyparams       id: unsigned int, name: string(64), description: string(255)
-- @response         tournament
+- @bodyparams name: string(64), description: string(255)
+- @response tournament
+
+### @route {PUT} /tournament/update
+
+**REQUIRES AUTH**
+
+- @bodyparams id: unsigned int, name: string(64), description: string(255)
+- @response tournament
 
 ### @route {DELETE} /tournament/delete
+
 **REQUIRES AUTH**
 
-- @bodyparams       id: unsigned int
+- @bodyparams id: unsigned int
 - @response
 
 </details>
@@ -76,24 +87,32 @@ All functionnal routes will be listed here
 
 <summary>Users</summary>
 
+### @route {POST} /user/register
 
-### @route {POST}  /user/register
-**REQUIRES AUTH**
-- @bodyparams      username: string(64), password: string(72)
-- @response        jwt token
+- @bodyparams username: string(64), password: string(72)
+- @response jwt token
 
-### @route {PUT}   /user/update
-**REQUIRES AUTH**
+### @route {PUT} /user/update
 
-- @bodyparams      old_password: string(72), new_username: string(64), new_password: string(72)
-- @response        jwt token
-
-
-### @route {POST}  /user/auth
 **REQUIRES AUTH**
 
-- @bodyparams      username: string(64), password: string(72)
-- @response        jwt token
+- @bodyparams old_password: string(72), new_username: string(64), new_password: string(72)
+- @response
+
+### @route {POST} /user/auth
+
+- @bodyparams username: string(64), password: string(72)
+- @response jwt token
+
+### @route {POST} /user/refresh
+
+- @bodyparams
+- @response
+
+### @route {POST} /user/logout
+
+- @bodyparams
+- @response
 
 </details>
 
@@ -101,31 +120,35 @@ All functionnal routes will be listed here
 
 <summary>Matches</summary>
 
-### @route {GET}    /match/list/
+### @route {GET} /match/list/
 
-- @param            id(tournament)
-- @response         array of matches
+- @param id(tournament)
+- @response array of matches
 
-### @route {GET}    /match/
+### @route {GET} /match/
 
-- @param            id
-- @response         match
+- @param id
+- @response match
 
-### @route {POST}   /match/create
-**REQUIRES AUTH**
-- @bodyparams       id(tournament)
-- @response         
+### @route {POST} /match/create
 
-### @route {PUT}    /match/score
 **REQUIRES AUTH**
 
-- @bodyparams       id(match), score: string(20) matching regex /^-?\d+\/-?\d+$/ (two ints separated by a /)
-- @response         
+- @bodyparams id(tournament)
+- @response
+
+### @route {PUT} /match/score
+
+**REQUIRES AUTH**
+
+- @bodyparams id(match), score: string(20) matching regex /^-?\d+\/-?\d+$/ (two ints separated by a /)
+- @response
 
 ### @route {DELETE} /match/delete
+
 **REQUIRES AUTH**
 
-- @bodyparams       id(match)
+- @bodyparams id(match)
 - @response
 
 </details>
