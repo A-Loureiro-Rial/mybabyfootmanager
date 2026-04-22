@@ -6,6 +6,16 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+## not included YET!
+DB
+DB/*
+
+# Old files I no longer use but want to keep
+old*.js
+
+# Secrets, for obvious reasons
+secret.json
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 

@@ -1,0 +1,34 @@
+{
+  "name": "mybabyfootmanager",
+  "version": "1.0.0",
+  "description": "Appli de gestion de tournois de babyfoot",
+  "homepage": "https://github.com/A-Loureiro-Rial/mybabyfootmanager#readme",
+  "bugs": {
+    "url": "https://github.com/A-Loureiro-Rial/mybabyfootmanager/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/A-Loureiro-Rial/mybabyfootmanager.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jose": "^6.2.2",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.1",
+    "nodemon": "^3.1.14",
+    "sequelize": "^6.37.8"
+  }
+}
