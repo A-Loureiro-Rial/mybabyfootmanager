@@ -27,11 +27,17 @@ exports.register = async (request, response) => {
             const token = await new jose.SignJWT({ sub: user.id, role: 'user' })
                 .setProtectedHeader({ alg: 'HS256' })
                 .setIssuedAt()
-                .setExpirationTime('15m')
+                .setExpirationTime('1h')
                 .sign(secret);
+            const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
+            response.cookie("auth_token", token, {
+                httpOnly: true,
+                secure: isNotLocal,          // false in local dev
+                sameSite: "Strict",
+                maxAge: 60 * 60 * 1000
+            });
             response.status(201).json({
                 success: true,
-                jwt: token,
             });
         }
         else {
@@ -71,15 +77,21 @@ exports.auth = async (request, response) => {
                 const token = await new jose.SignJWT({ sub: user.id, role: role })
                     .setProtectedHeader({ alg: 'HS256' })
                     .setIssuedAt()
-                    .setExpirationTime('15m')
+                    .setExpirationTime('1h')
                     .sign(secret);
                 // updates the last_connexion info in the db for security
                 await user.update({
                     last_connexion: new Date().toISOString().replace("T", " ").replace("Z", "")
                 });
+                const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
+                response.cookie("auth_token", token, {
+                    httpOnly: true,
+                    secure: isNotLocal,          // false in local dev
+                    sameSite: "Strict",
+                    maxAge: 60 * 60 * 1000
+            });
                 response.status(200).json({
                     success: true,
-                    jwt: token,
                 });
             }
             else {
@@ -126,11 +138,17 @@ exports.updateUser = async (request, response) => {
                 const token = await new jose.SignJWT({ sub: user.id, role: role })
                     .setProtectedHeader({ alg: 'HS256' })
                     .setIssuedAt()
-                    .setExpirationTime('15m')
+                    .setExpirationTime('1h')
                     .sign(secret);
+                const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
+                response.cookie("auth_token", token, {
+                    httpOnly: true,
+                    secure: isNotLocal,          // false in local dev
+                    sameSite: "Strict",
+                    maxAge: 60 * 60 * 1000
+                });
                 response.status(200).json({
                     success: true,
-                    jwt: token,
                 });
             }
             else {

@@ -1,6 +1,9 @@
 // loads env variables
 require('dotenv').config({ path: '../.env' });
 
+// allows easier parsing for cookie responses
+const cookieParser = require("cookie-parser");
+
 // generates a connection to the database using sequelize
 const { connectDB } = require("./config/db");
 connectDB();
@@ -17,6 +20,7 @@ const { associations } = require("./src/associations");
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // loads the authMiddleware in case you want to use it for a full router
 // const authMiddleware = require("./src/middlewares/authMiddleware");

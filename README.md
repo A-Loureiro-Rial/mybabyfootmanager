@@ -1,4 +1,5 @@
 # mybabyfootmanager
+
 Appli de gestion de tournois de babyfoot
 
 <details>
@@ -15,6 +16,7 @@ Appli de gestion de tournois de babyfoot
 <summary>Setup with NPM</summary>
 
 ## API
+
 - Clone this repo however you want (zip, ssh, anything really)
 - `cd ./API` to move to the API section
 - if you're using Mysql : `npm install`
@@ -44,13 +46,13 @@ If you don't plan on using MySQL, you're on your own on this one ;)
 
 ## Database
 
-
 </details>
 
 <details>
 <summary>Ressources</summary>
 
 ## API
+
 - [Node.js](https://nodejs.org/en)
 - [Express.js](https://expressjs.com/)
 - [cors](https://www.npmjs.com/package/cors)
@@ -62,8 +64,10 @@ If you don't plan on using MySQL, you're on your own on this one ;)
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 - [nodemon](https://www.npmjs.com/package/nodemon)
 - [sequelize](https://www.npmjs.com/package/sequelize)
+- [cookie-parser](https://www.npmjs.com/package/cookie-parser)
 
 ## Client
+
 </details>
 
 <details>

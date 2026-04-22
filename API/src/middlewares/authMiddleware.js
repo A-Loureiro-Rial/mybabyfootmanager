@@ -5,9 +5,8 @@ require('dotenv').config();
 const authMiddleware = async (request, response, next) => {
     try {
 
-        // checks for bearer parameter in authorization header and get the JWT
-        const authHeader = request.headers['authorization'];
-        const token = authHeader.split(' ')[1];
+        // checks for the JWT inside the cookies
+        const token = request.cookies.auth_token;
         if (!token) {
             return response.status(401).json({ message: 'Token missing' });
         }
