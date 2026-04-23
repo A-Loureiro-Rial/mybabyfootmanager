@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### 2026.04.22 / ALOUREI
 
-### Added
+#### Added
 
 - route pour
   - logout
@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - middleware pour
   - checker que son refresh token est bon
 
-### Updated
+#### Updated
 
 - JWT : access token renvoyé et refresh token dans les cookies
 
@@ -28,14 +28,16 @@ TLDR: API fonctionnelle
 
 - Authentication
 - JWT
+
 - Controlleurs:
   - MatchesController
   - TournamentsController
   - UsersController
+
 - Middleware:
   - authMiddleware
 
-### Updated
+#### Updated
 
 - Tous les modèles afin d'utiliser complètement Sequelize
 - Teamcontroller afin d'utliser Sequelize
