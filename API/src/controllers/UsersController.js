@@ -24,7 +24,7 @@ exports.register = async (request, response) => {
                 username: username,
                 password_hash: hashedpassword,
             });
-            // then generates an access token and a refresh token
+            // then generates an access token and a refresh token: by default a new account is a user account
             const accessToken = await new jose.SignJWT({ sub: user.id, role: 'user' })
                 .setProtectedHeader({ alg: 'HS256' })
                 .setIssuedAt()
@@ -79,31 +79,24 @@ exports.auth = async (request, response) => {
             // checks if the given password matches the hashed one from the user
             const match = await bcrypt.compare(password, user.password_hash);
             if (match) {
-                // as said above, accounts types are already taken care of, they're just created as user by default
                 const role = user.account_type == 1 ? 'admin' : 'user';
-                // generates a JTW token
-                const token = await new jose.SignJWT({ sub: user.id, role: role })
-                    .setProtectedHeader({ alg: 'HS256' })
-                    .setIssuedAt()
-                    .setExpirationTime('1h')
-                    .sign(accessSecret);
                 // updates the last_connexion info in the db for security
                 await user.update({
                     last_connexion: new Date().toISOString().replace("T", " ").replace("Z", "")
                 });
             // then generates an access token and a refresh token
-                const accessToken = await new jose.SignJWT({ sub: user.id, role: 'user' })
+                const accessToken = await new jose.SignJWT({ sub: user.id, role: role })
                     .setProtectedHeader({ alg: 'HS256' })
                     .setIssuedAt()
                     .setExpirationTime('15min')
                     .sign(accessSecret);
-                const refreshToken = await new jose.SignJWT({ sub: user.id, role: 'user' })
+                const refreshToken = await new jose.SignJWT({ sub: user.id, role: role })
                     .setProtectedHeader({ alg: 'HS256' })
                     .setIssuedAt()
                     .setExpirationTime('7d')
                     .sign(refreshSecret);
                 const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
-                response.cookie("refreshToken", token, {
+                response.cookie("refreshToken", refreshToken, {
                     httpOnly: true,
                     secure: isNotLocal,          // false in local dev
                     sameSite: "Strict",
@@ -175,12 +168,12 @@ exports.updateUser = async (request, response) => {
 exports.refresh = async (request, response) => {
     
     // then generates an access token and a refresh token
-    const accessToken = await new jose.SignJWT({ sub: request.user.sub, role: 'user' })
+    const accessToken = await new jose.SignJWT({ sub: request.user.sub, role: request.user.role })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
         .setExpirationTime('15min')
         .sign(accessSecret);
-    const refreshToken = await new jose.SignJWT({ sub: request.user.sub , role: 'user' })
+    const refreshToken = await new jose.SignJWT({ sub: request.user.sub , role: request.user.role })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
         .setExpirationTime('7d')

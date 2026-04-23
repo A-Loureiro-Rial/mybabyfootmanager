@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+### 2026.04.23 / ALOUREI
+
+### Added
+
+- middleware pour
+  - Checker les droits de l'utilisateur
+
+### Fixed
+
+- Droits utilisateur stockés dans les tokens
+
+---
+
 ### 2026.04.22 / ALOUREI
 
 #### Added

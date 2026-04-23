@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 
 const authMiddleware = require('../middlewares/authMiddleware');
+const authorizeRoles = require("../middlewares/authorizeRoles");
 const TeamsController = require("../controllers/TeamsController");
 const router = express.Router();
 
@@ -18,21 +19,21 @@ router.get("/:id", TeamsController.findTeam);
 // @route {POST}        /team/create        REQUIRES AUTH
 // @bodyparams          name: string(64), description: string(255)
 // @response            team
-router.post("/create", authMiddleware, TeamsController.createTeam);
+router.post("/create", authMiddleware, authorizeRoles("admin"), TeamsController.createTeam);
 
 // @route {PUT}         /team/update        REQUIRES AUTH
 // @bodyparams          id: unsigned int, name: string(64), description: string(255)
 // @response            team
-router.put("/update", authMiddleware, TeamsController.updateTeam);
+router.put("/update", authMiddleware, authorizeRoles("admin"), TeamsController.updateTeam);
 
 // @route {DELETE}      /team/delete     REQUIRES AUTH
 // @bodyparams          id: unsigned int
 // @response
-router.delete("/delete", authMiddleware, TeamsController.deleteTeam);
+router.delete("/delete", authMiddleware, authorizeRoles("admin"), TeamsController.deleteTeam);
 
 // @route {POST}        /team/register  REQUIRES AUTH
 // @bodyparams          team: unsigned int, tournament: unsigned int
 // @response
-router.post("/register", authMiddleware, TeamsController.register);
+router.post("/register", authMiddleware, authorizeRoles("admin"), TeamsController.register);
 
 module.exports = router;
