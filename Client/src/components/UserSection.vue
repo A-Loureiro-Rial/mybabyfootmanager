@@ -2,6 +2,12 @@
 import { ref } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import { useMessage } from 'naive-ui';
+import { useFetch } from '@vueuse/core';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const auth = useAuth();
 const showModal = ref(false);
@@ -34,11 +40,35 @@ const signInRules = {
     },
 };
 
+// validates infos from the form and call the api to auth
 function validateSignIn(e) {
     e.preventDefault();
-    signInForm.value?.validate((errors) => {
+    signInForm.value?.validate(async (errors) => {
         if (!errors) {
-            message.success('Valid');
+            console.log(signInValue);
+            const { data, error } = await useFetch(apiUrl + '/user/auth', {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: signInValue.value.user.username,
+                    password: signInValue.value.user.password,
+                }),
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).json();
+            if (!error.value) {
+                auth.setAuth(data.value.accessToken, {
+                    username: signInValue.value.username,
+                    password: signInValue.value.password,
+                });
+                message.success('Signed in');
+                router.push('/dashboard');
+                showModal.value = false;
+            } else {
+                console.log(error);
+                message.error('Failed to authenticate');
+            }
         } else {
             console.log(errors);
             message.error('Invalid');
@@ -101,17 +131,43 @@ const registerRules = {
     ],
 };
 
+// checks if confirm password is the same as password on input
 function handlePasswordInput() {
     if (registerValues.value.reenteredPassword) {
         rPasswordFormItemRef.value?.validate({ trigger: 'password-input' });
     }
 }
 
-function validateRegister(e) {
+// checks if the form infos are valid and send a register request to the API
+async function validateRegister(e) {
     e.preventDefault();
-    registerForm.value?.validate((errors) => {
+    registerForm.value?.validate(async (errors) => {
         if (!errors) {
-            message.success('Valid');
+            const { data, error } = await useFetch(apiUrl + '/user/register', {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: registerValues.value.username,
+                    password: registerValues.value.password,
+                }),
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).json();
+            if (!error.value) {
+                auth.setAuth(data.value.accessToken, {
+                    id: data.value.user.id,
+                    username: data.value.user.username,
+                    password: data.value.user.password,
+                    role: data.value.user.role,
+                });
+                message.success('Registered');
+                router.push('/dashboard');
+                showModal.value = false;
+            } else {
+                console.log(error);
+                message.error('Failed to register');
+            }
         } else {
             console.log(errors);
             message.error('Invalid');
@@ -145,7 +201,11 @@ function validateRegister(e) {
                     <n-input v-model:value="signInValue.user.username" placeholder="Username" />
                 </n-form-item>
                 <n-form-item label="Password" path="user.password">
-                    <n-input v-model:value="signInValue.user.password" placeholder="Password" />
+                    <n-input
+                        type="password"
+                        v-model:value="signInValue.user.password"
+                        placeholder="Password"
+                    />
                 </n-form-item>
                 <n-form-item>
                     <n-button @click="validateSignIn"> Sign in </n-button>

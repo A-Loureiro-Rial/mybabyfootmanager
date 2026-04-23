@@ -5,7 +5,9 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import babyfoot from '@/assets/babyfoot.png';
 import UserSection from './UserSection.vue';
+import { useAuth } from '@/composables/useAuth';
 
+const auth = useAuth();
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
@@ -34,7 +36,10 @@ function handleClick(path) {
         subtitle="Parce que les seules roulettes qui tournent, c'est celles dans notre tête!"
     >
         <template #title>
-            <router-link to="/">My Babyfoot Manager</router-link>
+            <router-link v-if="auth.isAuthenticated.value" to="/dashboard"
+                >My Babyfoot Manager</router-link
+            >
+            <router-link v-else to="/">My Babyfoot Manager</router-link>
         </template>
         <template #header>
             <n-breadcrumb classname="routeList">

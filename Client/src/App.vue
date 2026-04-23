@@ -1,8 +1,20 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router';
-import HelloWorld from './components/HelloWorld.vue';
+import { RouterView } from 'vue-router';
 import { darkTheme } from 'naive-ui';
 import Header from './components/Header.vue';
+import { onMounted } from 'vue';
+import { useAuth } from '@/composables/useAuth';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const auth = useAuth();
+
+onMounted(() => {
+    if (!auth.isAuthenticated.value) {
+        auth.refresh();
+        router.push('/dashboard');
+    }
+});
 </script>
 
 <template>
