@@ -44,6 +44,11 @@ exports.register = async (request, response) => {
             });
             response.status(201).json({
                 success: true,
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    role: "user"
+                },
                 accessToken: accessToken
             });
         }
@@ -104,7 +109,12 @@ exports.auth = async (request, response) => {
                 });
                 response.status(200).json({
                     success: true,
-                    accessToken: accessToken
+                    accessToken: accessToken,
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        role: role
+                    }
                 });
             }
             else {

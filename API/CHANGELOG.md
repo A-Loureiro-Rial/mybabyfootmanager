@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- user infos on auth / register
 - middleware pour
   - Checker les droits de l'utilisateur
 
