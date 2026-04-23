@@ -18,7 +18,14 @@ const app = express();
 // create the foreign keys for the database
 const { associations } = require("./src/associations");
 app.use(bodyParser.json());
-app.use(cors());
+if (process.env.ENV_LOCAL == "true")
+{
+  app.use(cors({
+    origin: process.env.CLIENT_ORIGIN, // your frontend URL
+    credentials: true
+  }));
+}
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 

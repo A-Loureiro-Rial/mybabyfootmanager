@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Droits utilisateur stockés dans les tokens
+- Cors management
 
 ---
 
