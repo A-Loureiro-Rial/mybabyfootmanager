@@ -90,29 +90,34 @@ All functionnal routes will be listed here
 ### @route {POST} /user/register
 
 - @bodyparams username: string(64), password: string(72)
-- @response jwt token
+- @response jwt token, user infos
 
 ### @route {PUT} /user/update
 
 **REQUIRES AUTH**
 
 - @bodyparams old_password: string(72), new_username: string(64), new_password: string(72)
-- @response
+- @response user infos
 
 ### @route {POST} /user/auth
 
 - @bodyparams username: string(64), password: string(72)
-- @response jwt token
+- @response jwt token, user infos
 
 ### @route {POST} /user/refresh
 
 - @bodyparams
-- @response
+- @response jwt token
 
 ### @route {POST} /user/logout
 
 - @bodyparams
 - @response
+
+### @route {GET} /user/me
+
+- @param
+- @response user infos
 
 </details>
 

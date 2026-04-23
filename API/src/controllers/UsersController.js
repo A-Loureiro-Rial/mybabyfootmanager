@@ -158,6 +158,11 @@ exports.updateUser = async (request, response) => {
                 });
                 response.status(200).json({
                     success: true,
+                    user: {
+                        id: user.id,
+                        username: new_username,
+                        role: user.role
+                    }
                 });
             }
             else {
@@ -176,40 +181,80 @@ exports.updateUser = async (request, response) => {
 };
 
 exports.refresh = async (request, response) => {
-    
-    // then generates an access token and a refresh token
-    const accessToken = await new jose.SignJWT({ sub: request.user.sub, role: request.user.role })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setExpirationTime('15min')
-        .sign(accessSecret);
-    const refreshToken = await new jose.SignJWT({ sub: request.user.sub , role: request.user.role })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setExpirationTime('7d')
-        .sign(refreshSecret);
-    const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
-    response.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: isNotLocal,          // false in local dev
-        sameSite: "Strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000 
-    });
-    response.status(200).json({
-        success: true,
-        accessToken: accessToken
-    });
-    
+    try {
+        // then generates an access token and a refresh token
+        const accessToken = await new jose.SignJWT({ sub: request.user.sub, role: request.user.role })
+            .setProtectedHeader({ alg: 'HS256' })
+            .setIssuedAt()
+            .setExpirationTime('15min')
+            .sign(accessSecret);
+        const refreshToken = await new jose.SignJWT({ sub: request.user.sub , role: request.user.role })
+            .setProtectedHeader({ alg: 'HS256' })
+            .setIssuedAt()
+            .setExpirationTime('7d')
+            .sign(refreshSecret);
+        const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
+        response.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: isNotLocal,          // false in local dev
+            sameSite: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000 
+        });
+        response.status(200).json({
+            success: true,
+            accessToken: accessToken
+        });
+    } catch (error) {
+        response.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
 };
 
 exports.logout = async (request, response) => {
-    const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
-    response.clearCookie("refreshToken",{
-        httpOnly: true,
-        secure: isNotLocal,
-        sameSite: 'strict'
+    try {
+        const isNotLocal = process.env.ENV_LOCAL === "true" ? false : true;
+        response.clearCookie("refreshToken",{
+            httpOnly: true,
+            secure: isNotLocal,
+            sameSite: 'strict'
+        });
+        response.status(204).json({
+            sucess: true
+        });
+    } catch (error) {
+        response.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+
+};
+
+exports.me = async (request, response) => {
+    try{
+    const user = await Users.findByPk(request.user.sub);
+    if (user === null) {
+        response.status(401).json({
+            success: false,
+            error: "failed to find user"
+        });
+    }
+    const role = user.account_type == 1 ? 'admin' : 'user';
+
+    response.status(200).json({
+        success: true,
+        user: {
+            id: user.id,
+            username: user.username,
+            role: role
+        }
     });
-    response.status(204).json({
-        sucess: true
-    });
+    } catch (error) {
+        response.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
 };

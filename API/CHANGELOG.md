@@ -9,11 +9,13 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - user infos on auth / register
+- route /me pour récupérer les infos utilisateurs depuis le token
 - middleware pour
   - Checker les droits de l'utilisateur
 
 ### Fixed
 
+- Adding try/catch everywhere it wasn't done yet
 - Droits utilisateur stockés dans les tokens
 - Cors management
 
