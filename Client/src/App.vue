@@ -10,9 +10,9 @@ const router = useRouter();
 const auth = useAuth();
 
 onMounted(() => {
-    if (!auth.isAuthenticated.value) {
+    if (auth.getToken()) {
+        auth.me();
         auth.refresh();
-        router.push('/dashboard');
     }
 });
 </script>

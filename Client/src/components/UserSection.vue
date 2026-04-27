@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import { useMessage } from 'naive-ui';
 import { useFetch } from '@vueuse/core';
@@ -7,14 +7,42 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
+const isAuthenticated = computed(() => !!localStorage.getItem('token'));
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const auth = useAuth();
+
 const showModal = ref(false);
 
 const message = useMessage();
 const register = ref(false);
 const size = ref('medium');
+
+const options = [
+    {
+        label: 'Profil',
+        key: 'profile',
+        props: {
+            onClick: () => {
+                router.push('/profile');
+            },
+        },
+    },
+    {
+        label: 'Se déconnecter',
+        key: 'signout',
+        props: {
+            onClick: async () => {
+                await auth.clearAuth();
+                router.push('/');
+                window.location.reload();
+            },
+        },
+    },
+];
+
+const user = auth.getUser();
 
 // SIGN IN SECTION -------------------------------
 const signInForm = ref(null);
@@ -29,12 +57,12 @@ const signInRules = {
     user: {
         username: {
             required: true,
-            message: 'Please input username',
+            message: "Merci d'entrer un nom d'utilisateur",
             trigger: 'blur',
         },
         password: {
             required: true,
-            message: 'Please input your password',
+            message: "Merci d'entrer un mot de passe",
             trigger: ['input', 'blur'],
         },
     },
@@ -45,7 +73,6 @@ function validateSignIn(e) {
     e.preventDefault();
     signInForm.value?.validate(async (errors) => {
         if (!errors) {
-            console.log(signInValue);
             const { data, error } = await useFetch(apiUrl + '/user/auth', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -58,16 +85,14 @@ function validateSignIn(e) {
                 },
             }).json();
             if (!error.value) {
-                auth.setAuth(data.value.accessToken, {
-                    username: signInValue.value.username,
-                    password: signInValue.value.password,
-                });
-                message.success('Signed in');
-                router.push('/dashboard');
+                await auth.setToken(data.value.accessToken);
+                await auth.setUser(data.value.user);
+                message.success('Connecté');
                 showModal.value = false;
+                window.location.reload();
             } else {
                 console.log(error);
-                message.error('Failed to authenticate');
+                message.error('l&apos;');
             }
         } else {
             console.log(errors);
@@ -102,20 +127,20 @@ const registerRules = {
     username: [
         {
             required: true,
-            message: 'Please input username',
+            message: "Merci d'entrer un nom d'utilisateur",
             trigger: 'blur',
         },
     ],
     password: [
         {
             required: true,
-            message: 'Password is required',
+            message: "Merci d'entrer un mot de passe",
         },
     ],
     reenteredPassword: [
         {
             required: true,
-            message: 'Re-entered password is required',
+            message: 'Les mots de passe ne correspondent pas',
             trigger: ['input', 'blur'],
         },
         {
@@ -155,18 +180,17 @@ async function validateRegister(e) {
                 },
             }).json();
             if (!error.value) {
-                auth.setAuth(data.value.accessToken, {
+                await auth.setAuth(data.value.accessToken, {
                     id: data.value.user.id,
                     username: data.value.user.username,
-                    password: data.value.user.password,
                     role: data.value.user.role,
                 });
-                message.success('Registered');
-                router.push('/dashboard');
+                message.success('Inscription réussie !');
                 showModal.value = false;
+                window.location.reload();
             } else {
                 console.log(error);
-                message.error('Failed to register');
+                message.error('Echec de l&apos;inscription');
             }
         } else {
             console.log(errors);
@@ -178,12 +202,12 @@ async function validateRegister(e) {
 </script>
 <template>
     <!--if you're not authenticated, show the Sign in buttonin the header-->
-    <n-button v-if="!auth.isAuthenticated.value" @click="showModal = true">Sign in</n-button>
+    <n-button v-if="!isAuthenticated" @click="showModal = true">Se connecter</n-button>
     <!--if register is false (it is by default), show a modal with the Sign in form-->
     <n-modal v-if="!register" v-model:show="showModal">
         <n-card
             style="width: 600px"
-            title="Sign in"
+            title="Se connecter"
             :bordered="false"
             size="huge"
             role="dialog"
@@ -197,23 +221,27 @@ async function validateRegister(e) {
                 :rules="signInRules"
                 :size="size"
             >
-                <n-form-item label="Username" path="user.username">
-                    <n-input v-model:value="signInValue.user.username" placeholder="Username" />
+                <n-form-item label="Nom d'utilisateur" path="user.username">
+                    <n-input
+                        v-model:value="signInValue.user.username"
+                        placeholder="Nom d'utilisateur"
+                    />
                 </n-form-item>
-                <n-form-item label="Password" path="user.password">
+                <n-form-item label="Mot de passe" path="user.password">
                     <n-input
                         type="password"
                         v-model:value="signInValue.user.password"
-                        placeholder="Password"
+                        placeholder="Mot de passe"
                     />
                 </n-form-item>
                 <n-form-item>
-                    <n-button @click="validateSignIn"> Sign in </n-button>
+                    <n-button @click="validateSignIn">Se connecter</n-button>
                 </n-form-item>
             </n-form>
             <template #footer>
                 <div>
-                    Not registered ? Sign up <a class="link" @click="register = true">here</a>
+                    Pas de compte ? Tu peux en créer un
+                    <a class="link" @click="register = true">ici</a>
                 </div>
             </template>
         </n-card>
@@ -222,20 +250,24 @@ async function validateRegister(e) {
     <n-modal v-else v-model:show="showModal">
         <n-card
             style="width: 600px"
-            title="Sign up"
+            title="Créer un compte"
             :bordered="false"
             size="huge"
             role="dialog"
             aria-modal="true"
         >
             <n-form ref="registerForm" :model="registerValues" :rules="registerRules">
-                <n-form-item path="username" label="Username">
-                    <n-input v-model:value="registerValues.username" placeholder="Username" />
+                <n-form-item path="username" label="Nom d'utilisateur">
+                    <n-input
+                        v-model:value="registerValues.username"
+                        placeholder="Nom d'utilisateur"
+                    />
                 </n-form-item>
-                <n-form-item path="password" label="Password">
+                <n-form-item path="password" label="Mot de passe">
                     <n-input
                         v-model:value="registerValues.password"
                         type="password"
+                        placeholder="Mot de passe"
                         @input="handlePasswordInput"
                         @keydown.enter.prevent
                     />
@@ -244,12 +276,13 @@ async function validateRegister(e) {
                     ref="rPasswordFormItemRef"
                     first
                     path="reenteredPassword"
-                    label="Re-enter Password"
+                    label="Confirmer le mot de passe"
                 >
                     <n-input
                         v-model:value="registerValues.reenteredPassword"
                         :disabled="!registerValues.password"
                         type="password"
+                        placeholder="Confirmer le mot de passe"
                         @keydown.enter.prevent
                     />
                 </n-form-item>
@@ -262,7 +295,7 @@ async function validateRegister(e) {
                                 type="primary"
                                 @click="validateRegister"
                             >
-                                Register
+                                S&apos;inscrire
                             </n-button>
                         </div>
                     </n-col>
@@ -270,10 +303,16 @@ async function validateRegister(e) {
             </n-form>
             <template #footer>
                 <div>
-                    Already registered ? Sign in <a class="link" @click="register = false">here</a>
+                    Tu as déjà un compte ? Tu peux te connecter
+                    <a class="link" @click="register = false">ici</a>
                 </div>
             </template>
         </n-card>
     </n-modal>
+    <n-dropdown v-if="isAuthenticated" trigger="hover" :options="options">
+        <router-link to="/profile">
+            <n-button>{{ user?.username }}</n-button>
+        </router-link>
+    </n-dropdown>
 </template>
 <style scoped></style>

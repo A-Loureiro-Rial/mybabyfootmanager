@@ -1,5 +1,4 @@
 <script setup>
-import { useMessage } from 'naive-ui';
 import { RouterLink } from 'vue-router';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -10,11 +9,6 @@ import { useAuth } from '@/composables/useAuth';
 const auth = useAuth();
 const route = useRoute();
 const router = useRouter();
-const message = useMessage();
-
-function handleBack() {
-    message.info('[onBack]');
-}
 
 const breadcrumbs = computed(() => {
     return route.matched
@@ -36,10 +30,7 @@ function handleClick(path) {
         subtitle="Parce que les seules roulettes qui tournent, c'est celles dans notre tête!"
     >
         <template #title>
-            <router-link v-if="auth.isAuthenticated.value" to="/dashboard"
-                >My Babyfoot Manager</router-link
-            >
-            <router-link v-else to="/">My Babyfoot Manager</router-link>
+            <router-link to="/">My Babyfoot Manager</router-link>
         </template>
         <template #header>
             <n-breadcrumb classname="routeList">
@@ -56,8 +47,8 @@ function handleClick(path) {
         <template #avatar>
             <n-avatar size="large" class="avatar" :src="babyfoot" />
         </template>
-        <template class="authSection" #extra>
-            <n-space>
+        <template #extra>
+            <n-space class="authSection">
                 <UserSection />
             </n-space>
         </template>
@@ -72,5 +63,9 @@ function handleClick(path) {
 
 .avatar {
     background-color: transparent;
+}
+
+.authSection {
+    margin-left: 10px;
 }
 </style>
