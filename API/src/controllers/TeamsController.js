@@ -124,8 +124,46 @@ exports.deleteTeam = async (request, response) => {
         });
     }
 };
-// registers a team to a tournament given the team's id and the tournament's id
+// registers an array of teams to a tournament given the teams' ids and the tournament's id
 exports.register = async (request, response) => {
+    try {
+        const { teams, tournament } = request.body;
+        // blablabla checks if they exist
+        const searchTournament = await Tournaments.findByPk(tournament);
+
+        if (!searchTournament) {
+            return response.status(404).json({
+                success: false,
+                error: 'Registration failed: team or tournament does not exist.'
+            });
+        }
+        console.log(teams);
+        for (let i = 0; i < teams.length; i++) {
+            let searchTeam = await Teams.findByPk(teams[i]);
+            if (!searchTeam)
+            {
+                return response.status(404).json({
+                    success: false,
+                    error: 'Registration failed: team or tournament does not exist.'
+                });
+                // since registrations uses a joint table, you can register a team to a tournament with this function and it will automatically insert the row.
+            }
+            searchTournament.addTeams(searchTeam, { through: { selfGranted: false } });
+        }
+        response.status(201).json({
+            success: true,
+            data: {}
+        });
+    } catch (error) {
+        response.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+    // unregisters a team to a tournament given the team's id and the tournament's id
+exports.unregister = async (request, response) => {
     try {
         const { team, tournament } = request.body;
         // blablabla checks if they exist
@@ -135,13 +173,13 @@ exports.register = async (request, response) => {
         if (!searchTeam || !searchTournament) {
             return response.status(404).json({
                 success: false,
-                error: 'Registration failed: team or tournament does not exist.'
+                error: 'unregistration failed: team or tournament does not exist.'
             });
         }
         // since registrations uses a joint table, you can register a team to a tournament with this function and it will automatically insert the row.
-        searchTournament.addTeams(searchTeam, { through: { selfGranted: false } });
+        searchTournament.removeTeams(searchTeam, { through: { selfGranted: false } });
 
-        response.status(201).json({
+        response.status(200).json({
             success: true,
             data: {}
         });

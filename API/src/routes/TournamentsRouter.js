@@ -11,7 +11,7 @@ const router = express.Router();
 // @response        array of tournaments
 router.get("/list", TournamentsController.getTournaments);
 
-// @route {GET}     /tournament/
+// @route {GET}     /tournament
 // @param           id
 // @response        tournament
 router.get("/:id", TournamentsController.findTournament);
@@ -26,9 +26,14 @@ router.post("/create", authMiddleware, authorizeRoles("admin"), TournamentsContr
 // @response        tournament
 router.put("/update", authMiddleware, authorizeRoles("admin"), TournamentsController.updateTournament);
 
-// @route {DELETE}     /tournament/delete   REQUIRES AUTH
-// @bodyparams         id: unsigned int
+// @route {DELETE}  /tournament/delete   REQUIRES AUTH
+// @bodyparams      id: unsigned int
 // @response
 router.delete("/delete", authMiddleware, authorizeRoles("admin"), TournamentsController.deleteTournament)
+
+// @route {GET}     /tournament/registrations
+// @param           id
+// @response        array of teams
+router.get("/registrations/:id", TournamentsController.getRegistrations)
 
 module.exports = router;

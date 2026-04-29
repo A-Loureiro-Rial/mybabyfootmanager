@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+### 2026.04.29 / ALOUREI
+
+### Added
+
+- route pour lister les inscriptions d'équipes à un tournoi
+- route pour désinscrire une équipe à un tournoi
+
+### Updated
+
+- route /register: param team -> teams, devient array of unsigned ints au lieu de unsigned int. Inscrit la liste d'équipe donnée au tournoi
+
+---
+
 ### 2026.04.23 / ALOUREI
 
 ### Added

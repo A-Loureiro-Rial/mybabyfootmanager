@@ -32,8 +32,13 @@ router.put("/update", authMiddleware, authorizeRoles("admin"), TeamsController.u
 router.delete("/delete", authMiddleware, authorizeRoles("admin"), TeamsController.deleteTeam);
 
 // @route {POST}        /team/register  REQUIRES AUTH
-// @bodyparams          team: unsigned int, tournament: unsigned int
+// @bodyparams          teams: array of unsigned ints, tournament: unsigned int
 // @response
 router.post("/register", authMiddleware, authorizeRoles("admin"), TeamsController.register);
+
+// @route {DELETE}        /team/unregister  REQUIRES AUTH
+// @bodyparams          team: unsigned int, tournament: unsigned int
+// @response
+router.delete("/unregister", authMiddleware, authorizeRoles("admin"), TeamsController.unregister)
 
 module.exports = router;

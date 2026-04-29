@@ -41,6 +41,7 @@ exports.findTournament = async (request, response) => {
         });
     }
 };
+
 // creates a tournament given its name and description
 exports.createTournament = async (request, response) => {
     try {
@@ -110,6 +111,33 @@ exports.deleteTournament = async (request, response) => {
 
         response.status(200).json({
             success: true,
+        });
+    } catch (error) {
+        response.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+exports.getRegistrations = async (request, response) => {
+    try {
+        // Checks if tournament exists...
+        const tournament = await Tournaments.findByPk(request.params.id);
+
+        if (!tournament) {
+            return response.status(404).json({
+                success: false,
+                error: 'Tournament not found'
+            });
+        }
+        const registrations = await tournament.getTeams({
+            attributes: ['id', 'name', 'description'],
+            joinTableAttributes: []
+        });
+        response.status(200).json({
+            success: true,
+            data: registrations
         });
     } catch (error) {
         response.status(500).json({

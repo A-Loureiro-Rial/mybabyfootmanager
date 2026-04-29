@@ -41,6 +41,13 @@ All functionnal routes will be listed here
 
 **REQUIRES AUTH**
 
+- @bodyparams teams: array of unsigned ints, tournament: unsigned int
+- @response
+
+### @route {DELETE} /team/unregister
+
+**REQUIRES AUTH**
+
 - @bodyparams team: unsigned int, tournament: unsigned int
 - @response
 
@@ -55,7 +62,7 @@ All functionnal routes will be listed here
 - @param
 - @response array of tournaments
 
-### @route {GET} /tournament/
+### @route {GET} /tournament/:id
 
 - @param id
 - @response tournament
@@ -80,6 +87,11 @@ All functionnal routes will be listed here
 
 - @bodyparams id: unsigned int
 - @response
+
+### @route {GET} /tournament/registrations/:id
+
+- @param id
+- @response array of teams
 
 </details>
 
