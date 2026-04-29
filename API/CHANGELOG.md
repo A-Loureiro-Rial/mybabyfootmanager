@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ### 2026.04.29 / ALOUREI
 
+#### Added
+
+- Tournament: ajout d'une row date de type datetime
+
+#### Fixed
+
+- Synchronisation de la DB uniquement au lancement de l'API
+
+---
+
+### 2026.04.28 / ALOUREI
+
 ### Added
 
 - route pour lister les inscriptions d'équipes à un tournoi
@@ -19,14 +31,14 @@ All notable changes to this project will be documented in this file.
 
 ### 2026.04.23 / ALOUREI
 
-### Added
+#### Added
 
 - user infos on auth / register
 - route /me pour récupérer les infos utilisateurs depuis le token
 - middleware pour
   - Checker les droits de l'utilisateur
 
-### Fixed
+#### Fixed
 
 - Adding try/catch everywhere it wasn't done yet
 - Droits utilisateur stockés dans les tokens

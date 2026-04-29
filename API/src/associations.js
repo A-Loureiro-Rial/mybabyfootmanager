@@ -2,7 +2,6 @@ const Matches = require("./models/Matches");
 const Teams = require("./models/Teams");
 const Tournaments = require("./models/Tournaments");
 const Registrations = require("./models/Registrations");
-const { syncDB } = require("../config/db");
 
 const associations = async () => {
     // foreign keys for the match table (team_a, team_b and winner are ids from the teams table and tournament_id is from tournaments)
@@ -44,8 +43,6 @@ const associations = async () => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE"
     });
-
-    syncDB();
 };
 
 module.exports = { associations };

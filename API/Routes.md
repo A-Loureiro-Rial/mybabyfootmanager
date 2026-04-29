@@ -71,14 +71,14 @@ All functionnal routes will be listed here
 
 **REQUIRES AUTH**
 
-- @bodyparams name: string(64), description: string(255)
+- @bodyparams name: string(64), description: string(255), date: string au format "YYYY-MM-DD HH:mm:ss"
 - @response tournament
 
 ### @route {PUT} /tournament/update
 
 **REQUIRES AUTH**
 
-- @bodyparams id: unsigned int, name: string(64), description: string(255)
+- @bodyparams id: unsigned int, name: string(64), description: string(255), date: string au format "YYYY-MM-DD HH:mm:ss"
 - @response tournament
 
 ### @route {DELETE} /tournament/delete

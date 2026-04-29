@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { sequelize, syncDB } = require('../../config/db');
+const { sequelize } = require('../../config/db');
 
 const Teams = sequelize.define("teams", {
     id:
@@ -23,5 +23,4 @@ const Teams = sequelize.define("teams", {
     timestamps: true,
 });
 
-syncDB();
 module.exports = Teams;

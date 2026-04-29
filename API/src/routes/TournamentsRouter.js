@@ -17,12 +17,12 @@ router.get("/list", TournamentsController.getTournaments);
 router.get("/:id", TournamentsController.findTournament);
 
 // @route {POST}    /tournament/create      REQUIRES AUTH
-// @bodyparams      name: string(64), description: string(255)
+// @bodyparams      name: string(64), description: string(255), date: string
 // @response        tournament
 router.post("/create", authMiddleware, authorizeRoles("admin"), TournamentsController.createTournament);
 
 // @route {PUT}     /tournament/update      REQUIRES AUTH
-// @bodyparams      id: unsigned int, name: string(64), description: string(255)
+// @bodyparams      id: unsigned int, name: string(64), description: string(255), date: string
 // @response        tournament
 router.put("/update", authMiddleware, authorizeRoles("admin"), TournamentsController.updateTournament);
 

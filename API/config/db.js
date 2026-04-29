@@ -19,15 +19,12 @@ const connectDB = async () => {
         console.log('Database connection has been established successfully.');
         await sequelize.sync({ alter: true });
         console.log('All models were synchronized successfully.');
+
     } catch (error) {
         console.error('Unable to connect to the database:', error);
         process.exit(1);
     }
 };
 
-const syncDB = async () => {
-    await sequelize.sync({});
-};
 
-
-module.exports = { sequelize, connectDB, syncDB };
+module.exports = { sequelize, connectDB };

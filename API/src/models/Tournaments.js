@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { sequelize, syncDB } = require('../../config/db');
+const { sequelize } = require('../../config/db');
 
 const Tournaments = sequelize.define("tournaments", {
     id:
@@ -17,11 +17,15 @@ const Tournaments = sequelize.define("tournaments", {
     {
         type: DataTypes.STRING(255),
         allowNull: true,
+    },
+    date:
+    {
+        type: DataTypes.DATE,
+        allowNull: false,
     }
 }, {
     tableName: 'tournaments',
     timestamps: true,
 });
 
-syncDB();
 module.exports = Tournaments;

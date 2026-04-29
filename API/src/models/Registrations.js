@@ -14,7 +14,6 @@ const Registrations = sequelize.define("registrations", {
     timestamps: false,
 });
 
-syncDB();
 module.exports = Registrations;
 
 

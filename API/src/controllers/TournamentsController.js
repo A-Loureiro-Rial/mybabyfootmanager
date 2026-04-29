@@ -45,11 +45,21 @@ exports.findTournament = async (request, response) => {
 // creates a tournament given its name and description
 exports.createTournament = async (request, response) => {
     try {
-        const { name, description } = request.body;
+        const { name, description, date } = request.body;
+        // checks if date matches a datetime regex
+        const regex =/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
+        if (!regex.test(date))
+        {
+            return response.status(404).json({
+                success: false,
+                error: 'Invalid Date'
+            });
+        }
 
         const tournament = await Tournaments.create({
             name,
-            description
+            description,
+            date
         });
 
         response.status(201).json({
@@ -67,7 +77,7 @@ exports.createTournament = async (request, response) => {
 exports.updateTournament = async (request, response) => {
     try {
 
-        const { id, name, description } = request.body;
+        const { id, name, description, date } = request.body;
         // you know I always check if the row exist ;)
         const tournament = await Tournaments.findByPk(id);
 
@@ -77,6 +87,16 @@ exports.updateTournament = async (request, response) => {
                 error: 'Tournament not found'
             });
         }
+        // checks if date matches a datetime regex
+        const regex =/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
+        if (!regex.test(date))
+        {
+            return response.status(404).json({
+                success: false,
+                error: 'Invalid Date'
+            });
+        }
+        
         // here's where the update happens
         await tournament.update({
             name: name || tournament.name,
