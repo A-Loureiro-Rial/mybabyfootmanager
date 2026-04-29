@@ -100,7 +100,8 @@ exports.updateTournament = async (request, response) => {
         // here's where the update happens
         await tournament.update({
             name: name || tournament.name,
-            description: description || tournament.description
+            description: description || tournament.description,
+            date: date || tournament.date
         });
 
         response.status(200).json({
