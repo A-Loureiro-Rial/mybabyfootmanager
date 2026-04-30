@@ -4,15 +4,13 @@ import { darkTheme } from 'naive-ui';
 import Header from './components/Header.vue';
 import { onMounted } from 'vue';
 import { useAuth } from '@/composables/useAuth';
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
 const auth = useAuth();
 
-onMounted(() => {
+onMounted(async () => {
     if (auth.getToken()) {
-        auth.me();
-        auth.refresh();
+        await auth.refresh();
+        await auth.me();
     }
 });
 </script>
@@ -24,7 +22,7 @@ onMounted(() => {
                 <div class="main">
                     <Header />
                 </div>
-                <RouterView />
+                <RouterView class="page-content" />
             </n-loading-bar-provider>
         </n-message-provider>
     </n-config-provider>

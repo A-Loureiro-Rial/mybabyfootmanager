@@ -1,13 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { useAuth } from '@/composables/useAuth';
+import { ref } from 'vue';
+import { useAuth, isAuthenticated, username } from '@/composables/useAuth';
 import { useMessage } from 'naive-ui';
 import { useFetch } from '@vueuse/core';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-const isAuthenticated = computed(() => !!localStorage.getItem('token'));
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -35,14 +33,12 @@ const options = [
         props: {
             onClick: async () => {
                 await auth.clearAuth();
+                message.success('Déconnecté');
                 router.push('/');
-                window.location.reload();
             },
         },
     },
 ];
-
-const user = auth.getUser();
 
 // SIGN IN SECTION -------------------------------
 const signInForm = ref(null);
@@ -69,7 +65,7 @@ const signInRules = {
 };
 
 // validates infos from the form and call the api to auth
-function validateSignIn(e) {
+async function validateSignIn(e) {
     e.preventDefault();
     signInForm.value?.validate(async (errors) => {
         if (!errors) {
@@ -89,14 +85,13 @@ function validateSignIn(e) {
                 await auth.setUser(data.value.user);
                 message.success('Connecté');
                 showModal.value = false;
-                window.location.reload();
             } else {
-                console.log(error);
-                message.error('l&apos;');
+                console.error(error);
+                message.error("Erreur lors de l'inscription");
             }
         } else {
-            console.log(errors);
-            message.error('Invalid');
+            console.error(errors);
+            message.error('Inscription non valide');
         }
     });
 }
@@ -180,21 +175,17 @@ async function validateRegister(e) {
                 },
             }).json();
             if (!error.value) {
-                await auth.setAuth(data.value.accessToken, {
-                    id: data.value.user.id,
-                    username: data.value.user.username,
-                    role: data.value.user.role,
-                });
+                await auth.setUser(data.value.user);
+                await auth.setToken(data.value.accessToken);
                 message.success('Inscription réussie !');
                 showModal.value = false;
-                window.location.reload();
             } else {
-                console.log(error);
-                message.error('Echec de l&apos;inscription');
+                console.error(error);
+                message.error("Échec de l'inscription");
             }
         } else {
-            console.log(errors);
-            message.error('Invalid');
+            console.error(errors);
+            message.error("Formulaire d'inscription invalide");
         }
     });
 }
@@ -311,7 +302,7 @@ async function validateRegister(e) {
     </n-modal>
     <n-dropdown v-if="isAuthenticated" trigger="hover" :options="options">
         <router-link to="/profile">
-            <n-button>{{ user?.username }}</n-button>
+            <n-button>{{ username }}</n-button>
         </router-link>
     </n-dropdown>
 </template>

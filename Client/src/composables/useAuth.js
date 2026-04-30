@@ -1,12 +1,20 @@
-import { useFetch } from '@vueuse/core';
+import { useApiFetch } from './useApiFetch';
+import { ref } from 'vue';
+const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true' ? true : false);
+const id = ref(localStorage.getItem('id'));
+const username = ref(localStorage.getItem('username'));
+const role = ref(localStorage.getItem('role'));
 
-const apiUrl = import.meta.env.VITE_API_URL;
-
-export function useAuth() {
+function useAuth() {
     async function setUser(userInfos) {
         localStorage.setItem('id', userInfos.id);
         localStorage.setItem('username', userInfos.username);
         localStorage.setItem('role', userInfos.role);
+        localStorage.setItem('isAuthenticated', 'true');
+        id.value = userInfos.id;
+        username.value = userInfos.username;
+        role.value = userInfos.role;
+        isAuthenticated.value = true;
     }
 
     async function setToken(token) {
@@ -27,7 +35,7 @@ export function useAuth() {
     }
 
     async function clearAuth() {
-        const { error } = await useFetch(apiUrl + '/user/logout', {
+        const { error } = await useApiFetch('/user/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,14 +47,19 @@ export function useAuth() {
             localStorage.removeItem('id');
             localStorage.removeItem('username');
             localStorage.removeItem('role');
+            localStorage.setItem('isAuthenticated', false);
         } else {
             console.error(error);
         }
+        isAuthenticated.value = false;
+        id.value = null;
+        username.value = null;
+        role.value = null;
     }
 
     async function me() {
         const Authorization = getToken().length > 0 ? 'Bearer ' + getToken() : null;
-        const { data, error } = await useFetch(apiUrl + '/user/me', {
+        const { data, error } = await useApiFetch('/user/me', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -62,7 +75,7 @@ export function useAuth() {
     }
 
     async function refresh() {
-        const { data, error, statusCode } = await useFetch(apiUrl + '/user/refresh', {
+        const { data, error, statusCode } = await useApiFetch('/user/refresh', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,7 +89,30 @@ export function useAuth() {
         }
     }
 
+    async function updateUser(oldPassword, newUsername, newPassword) {
+        const { data, error } = await useApiFetch('/user/update', {
+            method: 'PUT',
+            body: JSON.stringify({
+                old_password: oldPassword,
+                new_username: newUsername,
+                new_password: newPassword,
+            }),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).json();
+        if (!error.value) {
+            username.value = data.value.user.username;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     return {
+        updateUser,
         useAuth,
         setUser,
         setToken,
@@ -87,3 +123,5 @@ export function useAuth() {
         refresh,
     };
 }
+
+export { useAuth, isAuthenticated, id, username, role };

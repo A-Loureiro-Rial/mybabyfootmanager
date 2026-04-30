@@ -27,24 +27,16 @@ Appli de gestion de tournois de babyfoot
 
 ## Client
 
+- `cd ./Client` to move to the client section
+- execute `npm install`
+- Create a .env at the root of the client folder, there's a template [here](./Client/.env-template) with all the infos required
+- execute `npm run dev` to launch the vue projet (on dev environment only, this is an test so it shouldn't go to production anyway)
+
 ## Database
 
 I used MySQL so here's a [download link](https://dev.mysql.com/downloads/installer/) if you're on windows. If you're on linux, [here's some documentation](https://ubuntu.com/server/docs/how-to/databases/install-mysql/).
 
 If you don't plan on using MySQL, you're on your own on this one ;)
-
-</details>
-
-<details>
-<summary>Setup with Docker (not implemented yet)</summary>
-
-# NOT IMPLEMENTED YET SORRY ;-;
-
-## API
-
-## Client
-
-## Database
 
 </details>
 
@@ -67,6 +59,13 @@ If you don't plan on using MySQL, you're on your own on this one ;)
 - [cookie-parser](https://www.npmjs.com/package/cookie-parser)
 
 ## Client
+
+- [Vue 3](https://vuejs.org/guide/introduction)
+- [Vite](https://vite.dev/) !! devtool !!
+- [VueUse](https://vueuse.org/guide/)
+- [Naive Ui](https://www.naiveui.com/en-US/os-theme/docs/installation)
+- [prettier](https://prettier.io/) !! devtool !!
+- [VueRouter](https://router.vuejs.org/installation.html)
 
 </details>
 
