@@ -70,6 +70,11 @@ If you don't plan on using MySQL, you're on your own on this one ;)
 </details>
 
 <details>
+<summary>Notes</summary>
+If you want to have an admin account, just set manually account_type to 1 on one of your user, sign out and sign in again
+</details>
+
+<details>
 <summary>Contributors</summary>
 
 - [ALOUREI](https://github.com/A-Loureiro-Rial)
