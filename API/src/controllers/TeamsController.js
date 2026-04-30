@@ -23,7 +23,17 @@ exports.getTeams = async (request, response) => {
 // finds a team given its id
 exports.findTeam = async (request, response) => {
     try {
-        const team = await Teams.findByPk(request.params.id);
+        
+        const id = parseInt(request.params.id);
+        if (isNaN(id))
+        {
+            response.status(400).json({
+                success: false,
+                error: 'Invalid id'
+            });
+        }
+
+        const team = await Teams.findByPk(id);
 
         if (!team) {
             return response.status(404).json({
@@ -48,7 +58,13 @@ exports.findTeam = async (request, response) => {
 exports.createTeam = async (request, response) => {
     try {
         const { name, description } = request.body;
-
+        if (name.length == 0)
+        {
+            response.status(400).json({
+            success: false,
+            error: 'Invalid name'
+        });
+        }
         const team = await Teams.create({
             name,
             description

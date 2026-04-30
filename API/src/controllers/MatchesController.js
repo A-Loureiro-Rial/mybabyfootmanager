@@ -1,12 +1,23 @@
 const Matches = require('../models/Matches');
+const Tournaments = require('../models/Tournaments');
 const Registrations = require('../models/Registrations');
 
 // list all matches given a tournament id
 exports.getMatches = async (request, response) => {
     try {
+        
+        const id = parseInt(request.params.id);
+        if (isNaN(id))
+        {
+            response.status(400).json({
+                success: false,
+                error: 'Invalid id'
+            });
+        }
+
         const list = await Matches.findAll({
             where: {
-                tournament_id: request.params.id
+                tournament_id: id
             }
         });
 
@@ -26,7 +37,16 @@ exports.getMatches = async (request, response) => {
 // search for a specific match given its id
 exports.findMatch = async (request, response) => {
     try {
-        const match = await Matches.findByPk(request.params.id);
+        const id = parseInt(request.params.id);
+        if (isNaN(id))
+        {
+            response.status(400).json({
+                success: false,
+                error: 'Invalid id'
+            });
+        }
+
+        const match = await Matches.findByPk(id);
 
         if (!match) {
             return response.status(404).json({
@@ -51,13 +71,42 @@ exports.findMatch = async (request, response) => {
 exports.createMatches = async (request, response) => {
     try {
         const { id } = request.body;
+        
+        const tournament_id = parseInt(id);
+        if (isNaN(tournament_id))
+        {
+            response.status(400).json({
+                success: false,
+                error: 'Invalid id'
+            });
+        }
+        // checks if tournament exists
+         const tournament = await Tournaments.findByPk(tournament_id);
+        if (!tournament) {
+            return response.status(404).json({
+                success: false,
+                error: 'tournament not found'
+            });
+        }
+        // removes all existing matches of given tournament
+        await Matches.destroy({
+            where : {
+                tournament_id: tournament.id
+            }
+        });
         // get all registrations for given tournament
         let RegistrationsList = await Registrations.findAll({
             where: {
-                tournament_id: id
+                tournament_id: tournament.id
             }
         });
-
+        if (RegistrationsList.length < 2)
+        {
+            return response.status(404).json({
+                success: false,
+                error: 'tournament needs at least 2 teams registered'
+            });
+        }
         // shuffle them
         let currentIndex = RegistrationsList.length;
         while (currentIndex != 0) {
@@ -74,12 +123,19 @@ exports.createMatches = async (request, response) => {
                 await Matches.create({
                     "team_a": RegistrationsList[i].dataValues["team_id"],
                     "team_b": RegistrationsList[j].dataValues["team_id"],
-                    "tournament_id": id
+                    "tournament_id": tournament.id
                 });
             }
         }
+        // then get the list of all matches and returns it
+        const list = await Matches.findAll({
+            where: {
+                tournament_id: tournament.id
+            }
+        });
         response.status(201).json({
             success: true,
+            data: list
         });
     } catch (error) {
         response.status(400).json({
@@ -94,13 +150,14 @@ exports.createMatches = async (request, response) => {
 exports.scoreMatch = async (request, response) => {
     try {
         const { id, score } = request.body;
-        // search for the match with its id
-        const match = await Matches.findByPk(id);
-        if (!match) {
+        // check the value of the id
+        const match_id = parseInt(id);
+        if (isNaN(match_id))
+        {
             return response.status(404).json({
                 success: false,
-                error: 'Match not found'
-            });
+                error: 'Invalid id'
+            }); 
         }
         // check if the score is two numbers separated by a "/"
         const regex = /^-?\d+\/-?\d+$/;
@@ -110,19 +167,27 @@ exports.scoreMatch = async (request, response) => {
                 error: 'Invalid Score'
             });
         }
+        // search for the match with its id
+        const match = await Matches.findByPk(id);
+        if (!match) {
+            return response.status(404).json({
+                success: false,
+                error: 'Match not found'
+            });
+        }
         // parse the score into two integers
         const scores = score.split("/");
         scores[0] = parseInt(scores[0]);
         scores[1] = parseInt(scores[1]);
         // check for whose score is higher and determine whether it's a win for a, a win for b, or a draw (in which case there's no winner)
         const winner = scores[0] > scores[1] ? match.team_a : scores[1] > scores[0] ? match.team_b : null;
-        console.log("WINNER ID = " + winner);
         await match.update({
             score: score,
             winner: winner
         });
         response.status(200).json({
             success: true,
+            data: match
         });
     } catch (error) {
         response.status(500).json({
@@ -136,9 +201,17 @@ exports.scoreMatch = async (request, response) => {
 exports.deleteMatch = async (request, response) => {
     try {
         const { id } = request.body;
+        const tournament_id = parseInt(id);
+        if (isNaN(id))
+        {
+            response.status(400).json({
+                success: false,
+                error: 'Invalid id'
+            });
+        }
 
         // checks if match exists
-        const match = await Matches.findByPk(id);
+        const match = await Matches.findByPk(tournament_id);
         if (!match) {
             return response.status(404).json({
                 success: false,
@@ -146,7 +219,7 @@ exports.deleteMatch = async (request, response) => {
             });
         }
         // then deletes it
-        await team.destroy();
+        await match.destroy();
         response.status(200).json({
             success: true,
         });

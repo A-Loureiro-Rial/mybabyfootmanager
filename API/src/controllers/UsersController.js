@@ -12,6 +12,13 @@ const refreshSecret = new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET)
 exports.register = async (request, response) => {
     try {
         const { username, password } = request.body;
+        if (username.length > 64 || username.length == 0 || password.length > 72 || password.length == 0 )
+        {
+            response.status(400).json({
+                success: false,
+                error: 'Invalid credentials'
+            });
+        }
         // checks if username is taken (it's supposed to be unique)
         const search = await Users.findOne({ where: { username: username } });
         // if it doesn't exist
@@ -55,7 +62,7 @@ exports.register = async (request, response) => {
         else {
             response.status(401).json({
                 success: false,
-                error: "user already exist"
+                error: "Invalid credentials"
             });
         }
 
@@ -77,7 +84,7 @@ exports.auth = async (request, response) => {
         if (user === null) {
             response.status(401).json({
                 success: false,
-                error: "invalid_credentials"
+                error: "Invalid Credentials"
             });
         }
         else {
@@ -136,6 +143,13 @@ exports.auth = async (request, response) => {
 exports.updateUser = async (request, response) => {
     try {
         const { old_password, new_username, new_password } = request.body;
+        if (new_password.length == 0 || new_password.length > 72 || new_username.length == 0 || new_username.length > 64)
+        {
+            response.status(400).json({
+                success: false,
+                error: 'Invalid credentials'
+            });
+        }
         // search for the user id with infos from the JWT token
         const user = await Users.findByPk(request.user.sub);
         if (user === null) {
@@ -145,6 +159,14 @@ exports.updateUser = async (request, response) => {
             });
         }
         else {
+            const check = await Users.findOne({ where: { username: new_username }});
+            if (check !== null && check.id != request.user.sub)
+            {
+                response.status(400).json({
+                    success: false,
+                    error: 'Invalid username'
+                });
+            }
             // then compares the old password with the hashed one from the user, for security reasons
             const match = await bcrypt.compare(old_password, user.password_hash);
             if (match) {

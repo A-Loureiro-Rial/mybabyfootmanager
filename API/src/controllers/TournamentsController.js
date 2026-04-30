@@ -20,8 +20,16 @@ exports.getTournaments = async (request, response) => {
 // finds a specific tournament given its id
 exports.findTournament = async (request, response) => {
     try {
+        const id = parseInt(request.params.id);
+        if (isNaN(id))
+        {
+            response.status(400).json({
+            success: false,
+            error: 'Invalid id'
+        });
+        }
         // Checks if tournament exists...
-        const tournament = await Tournaments.findByPk(request.params.id);
+        const tournament = await Tournaments.findByPk(id);
 
         if (!tournament) {
             return response.status(404).json({

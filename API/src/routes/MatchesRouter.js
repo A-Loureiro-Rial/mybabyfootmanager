@@ -19,12 +19,12 @@ router.get("/:id", MatchesController.findMatch);
 
 // @route {POST}        /match/create
 // @bodyparams          id(tournament)
-// @response            
+// @response            array of matches
 router.post("/create", authMiddleware, authorizeRoles("admin"), MatchesController.createMatches);
 
 // @route {PUT}         /match/score
 // @bodyparams          id(match), score: string(20) matching regex /^-?\d+\/-?\d+$/ (two ints separated by a /)
-// @response 
+// @response            match
 router.put("/score", authMiddleware, authorizeRoles("admin"), MatchesController.scoreMatch);
 
 // @route {DELETE}      /match/delete

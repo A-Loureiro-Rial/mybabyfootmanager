@@ -10,6 +10,12 @@ All notable changes to this project will be documented in this file.
 
 - Tournament: ajout d'une row date de type datetime
 
+#### Updated
+
+- Controlleurs: renfort des vérifications de données reçue par le client
+- Update user : retourne user
+- Update score: retourne le match
+
 #### Fixed
 
 - Synchronisation de la DB uniquement au lancement de l'API

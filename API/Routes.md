@@ -152,14 +152,14 @@ All functionnal routes will be listed here
 **REQUIRES AUTH**
 
 - @bodyparams id(tournament)
-- @response
+- @response array of matches
 
 ### @route {PUT} /match/score
 
 **REQUIRES AUTH**
 
 - @bodyparams id(match), score: string(20) matching regex /^-?\d+\/-?\d+$/ (two ints separated by a /)
-- @response
+- @response match
 
 ### @route {DELETE} /match/delete
 
